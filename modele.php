@@ -5,7 +5,7 @@ function ()
 
 }
 
-function )
+function ()
 {
     try
     {
@@ -20,7 +20,7 @@ function )
     $req->execute();
     $result = $req->fetchall();
 
-    return;
+    return $result;
 }
 
 function ()
