@@ -17,7 +17,7 @@ function )
     }
     $sql=''//requete sql
     $req = $db->prepare($sql);
-    $req->execute(array($postId));
+    $req->execute();
     $result = $req->fetchall();
 
     return;
