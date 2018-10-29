@@ -22,23 +22,23 @@ function controleId(){
 	return ( isset($_POST['id']) && !empty($_POST['id']) && is_numeric($_POST['id']) );
 }
 
-$nom = '';
-$prenom = '';
-$age = '';
-$datNais = '';
-$action = '';
-$erreur = '';
+$fantome= new Client('','','','','');
+$erreur= '';
+
+clientForm(){
+	return new Client($_POST['user_nom'],$_POST['user_prenom'],$_POST['user_age'], $_POST['user_datNais']);
+}
+
+modifClient(){
+	$modifC=clientForm();
+	$modif.setId($_POST['user_id']);
+	return $modif
+}
 
 if(isset($_POST)){
 	if(empty($_POST) || empty($_POST['action'])// controle si données post est vide
 		require('formulaire.php');
 	else{
-		if(!controleDonneesForm()){
-			$nom = $_POST['user_nom'];
-			$prenom = $_POST['user_prenom'];
-			$age = $_POST['user_age'];
-			$datNais = $_POST['user_datNais'];
-		}
 		if (controleId()){
 			$id = $_POST['user_id'];
 		}
@@ -49,39 +49,47 @@ if(isset($_POST)){
 				$clients=$db->selectClientsParNom($nom);
 				require('vueTableau.php')
 			case 'insert':
-				if(empty($nom)){
+				if(!controleDonneesForm()){
 					$erreur='une ou plusieurs données erronées ';
 					require('formulaire.php');
 				}
 				else{
-					$db->insertClient($nom,$prenom,$age,$dateNais);
+					$client= nouveauclient();
+					$db->insertClient($client);
+					$allClients=$db->getAllClients();
 					require('vueTableau.php');
 				}
 			case 'modifie':
-				if(empty($nom) || empty($id)){
+				if (!controleId() || !controleDonneesForm()){
 					$erreur='erreur sur les données du client à modifier';
+					$allClients=$db->getAllClients();
 					require('vueTableau.php');
 				}
 				else{
+					$client=modifClient();
 					require('formulaire.php');
 				}
 				break;
 			case 'supprime':
-				if(empty($nom) || empty($id)){
+				if (!controleId() || !controleDonneesForm()){
 					$erreur='erreur sur les données du client à modifier';
 				}
 				else{
-					$db->supprimeClient($id);
+					$client=modifClient();
+					$db->supprimeClient($client);
 				}
+				$allClients=$db->getAllClients();
 				require('vueTableau.php');
 				break;
 			case'update':
-				if(empty($nom) || empty($id)){
+				if (!controleId() || !controleDonneesForm()){
 					$erreur='une ou plusieurs données erronées ';
 					require('formulaire.php');
 				}
 				else{
-					$db->updateClient($id,$nom,$prenom,$age,$dateNais)
+					$client=modifClient();
+					$db->updateClient($client);
+					$allClients=$db->getAllClients();
 					require('vueTableau.php');
 				}
 			default:
@@ -89,3 +97,5 @@ if(isset($_POST)){
 		}
 	}	
 }
+?>
+
