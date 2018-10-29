@@ -47,7 +47,7 @@ if(isset($_POST)){
 		switch ($action){ // vérifie l'action demander
 			case 'affiche':
 				$clients=$db->selectClientsParNom($nom);
-				require('vueTableau.php')
+				require('tableau.php')
 			case 'insert':
 				if(!controleDonneesForm()){
 					$erreur='une ou plusieurs données erronées ';
@@ -57,13 +57,13 @@ if(isset($_POST)){
 					$client= nouveauclient();
 					$db->insertClient($client);
 					$allClients=$db->getAllClients();
-					require('vueTableau.php');
+					require('tableau.php');
 				}
 			case 'modifie':
 				if (!controleId() || !controleDonneesForm()){
 					$erreur='erreur sur les données du client à modifier';
 					$allClients=$db->getAllClients();
-					require('vueTableau.php');
+					require('tableau.php');
 				}
 				else{
 					$client=modifClient();
@@ -79,7 +79,7 @@ if(isset($_POST)){
 					$db->supprimeClient($client);
 				}
 				$allClients=$db->getAllClients();
-				require('vueTableau.php');
+				require('tableau.php');
 				break;
 			case'update':
 				if (!controleId() || !controleDonneesForm()){
@@ -90,7 +90,7 @@ if(isset($_POST)){
 					$client=modifClient();
 					$db->updateClient($client);
 					$allClients=$db->getAllClients();
-					require('vueTableau.php');
+					require('tableau.php');
 				}
 			default:
 				break;
@@ -98,4 +98,3 @@ if(isset($_POST)){
 	}	
 }
 ?>
-
