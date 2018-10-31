@@ -1,12 +1,15 @@
 <?php
-require_once('conf.php');
-require_once('autoload.php');
-
+//require_once('conf.php');
+//require_once('autoload.php');
+require('Database.php');
+require('Client.php');
+//require('formulaire.php');
 date_default_timezone_set('Europe/Paris'); // paramétrage de la timezone pour la fonction strtotime()
 
 //fonction de controle sur les données client en POST
 function controleDonneesForm(){ // appelle les tests sur chaque type de données du formulaire
 	return (testAge() && testNom() && testPrenom() && testDate()) ;
+	echo "Test";
 }
 //controle sur l'age en POST
 function testAge(){ // test la bonne forme de la donnée age
@@ -26,55 +29,75 @@ function testPrenom(){ // test la bonne forme de la donnée prenom
 }
 //controle sur l'id en POST
 function controleId(){
-	return ( isset($_POST['id']) && !empty($_POST['id']) && is_numeric($_POST['id']) );
+	return ( isset($_POST['user_id']) && !empty($_POST['user_id']) && is_numeric($_POST['user_id']) );
 }
 
 //initialisation des variables
-$client= new Client('','','','','');
+//$client= new Client('','','','',''); //Classe client pas encore créée
+$client = array('','','','','');
 $erreur= '';
 $action='insert';
 $allClients='';
 
 // fonction de création du client avec les données passées en POST
 // les données sont déjà controlées
-clientForm(){
-	return new Client($_POST['user_nom'],$_POST['user_prenom'],$_POST['user_age'], $_POST['user_datNais']); //constructeur class Client
-}
+//$client = new Client(); //constructeur class Client
+//nouveauclient(){
+	//$client = new Client(); //constructeur class Client
+	
+//}
 
 // fonction de création du client pour modification
 // les données en POST sont déjà controlées en amont 
-modifClient(){
-	$modifClient=clientForm();
-	$modifClient.setId($_POST['user_id']); // ajout de l'id
-	return $modifClient;
-}
+//modifClient(){
+	//$modifClient=$client;
+	//$modifClient.setId($_POST['user_id']); // ajout de l'id
+	//return $modifClient;
+//}
 
 
 //routeur sur les vues
 if(isset($_POST)){
-	if(empty($_POST) || empty($_POST['action']) // controle si données post est vide
+	//var_dump($_POST);
+	if(empty($_POST) || empty($_POST['action'])) {// controle si données post est vide
 		require('formulaire.php'); // appelle la vue formulaire
+		
+	}
 	else{
 		if (controleId()){ 
 			$id = $_POST['user_id']; // récup l'id s'il existe
 		}
 		$db=Database::getInstance();  // établi la connexion à la BDD
 		$action=$_POST['action'];
+
+		//$clients=$db->selectClientsParNom("Meier");
 		switch ($action){ // vérifie l'action demander
 			case 'affiche':
-				$clients=$db->selectClientsParNom($nom);
-				require('tableau.php'); // appelle la vue du tableau
+				$allClients=$db->getAllClients(); //demande à la db de donner tout les clients sous forme de tableau de tableau
+				require('tableau.php');
+				break;
 			case 'insert':
 				if(!controleDonneesForm()){
 					$erreur='une ou plusieurs données erronées ';
 					require('formulaire.php'); // appelle la vue du formulaire
 				}
 				else{
-					$client= nouveauclient(); 
+					$doublon =$db->selectClientsParNom($_POST['user_nom']);
+					var_dump($doublon);
+					if(!$doublon){
+					//$client= nouveauclient(); 
+					
+					$client = array($_POST['user_nom'], $_POST['user_prenom'], $_POST['user_age'], $_POST['user_date']);
+					var_dump($client);
+
 					$db->insertClient($client); //demande d'insérer le client dans la db
 					$allClients=$db->getAllClients(); //demande à la db de donner tout les clients sous forme de tableau de tableau
 					require('tableau.php');
+					}
+					else 
+						$erreur= "doublon";
 				}
+				break;
 			case 'modifie':
 				if (!controleId() || !controleDonneesForm()){
 					$erreur='erreur sur les données du client à modifier';
@@ -82,17 +105,19 @@ if(isset($_POST)){
 					require('tableau.php');
 				}
 				else{
-					$client=modifClient();
+					//$client=modifClient();
+					$client = array($_POST['user_id'],$_POST['user_nom'], $_POST['user_prenom'], $_POST['user_age'], $_POST['user_date']);
+					$action='update';
 					require('formulaire.php');
 				}
 				break;
 			case 'supprime':
-				if (!controleId() || !controleDonneesForm()){
-					$erreur='erreur sur les données du client à modifier';
+				if (!controleId()){
+					$erreur='erreur sur les données du client à supprimer';
 				}
 				else{
-					$client=modifClient();
-					$db->supprimeClient($client); //demande à la db de supprimer le client 
+					//$client=modifClient();
+					$db->supprimeClient($id); //demande à la db de supprimer le client 
 				}
 				$allClients=$db->getAllClients();
 				require('tableau.php');
@@ -103,7 +128,8 @@ if(isset($_POST)){
 					require('formulaire.php');
 				}
 				else{
-					$client=modifClient();
+					//$client=modifClient();
+					$client = array($_POST['user_id'],$_POST['user_nom'], $_POST['user_prenom'], $_POST['user_age'], $_POST['user_date']);
 					$db->updateClient($client); //demande modification du client
 					$allClients=$db->getAllClients();
 					require('tableau.php');
@@ -111,6 +137,7 @@ if(isset($_POST)){
 			default:
 				break;
 		}
+		echo $erreur;
 	}	
 }
 ?>
