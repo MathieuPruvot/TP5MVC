@@ -13,5 +13,5 @@ require_once('autoload.php');
 	['DateN'=> 'DATE']
 	];
 	$primary=['ID'];
-	$db->createTable(DBNAME,$attributs,$primary,'');
+	$db->createTable(TABLENAME,$attributs,$primary,'');
 ?>

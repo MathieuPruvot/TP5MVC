@@ -70,7 +70,7 @@ class Database {
 		} //return $inserer;
     }
     public function getAllClients() {  //demande à la db de donner tout les clients sous forme de tableau
-        $query = $this->cnx->prepare('SELECT * FROM ".TABLENAME."');
+        $query = $this->cnx->prepare("SELECT * FROM ".TABLENAME);
         $query->execute();
         $resultat=$query->fetchAll();
         return $resultat;
@@ -91,7 +91,7 @@ class Database {
     }
     public function updateClient($client) {  //demande modification du client
         try {
-			$mettreajour = $this->cnx->prepare("UPDATE client SET Nom=:Nom, Prenom=:Prenom, Age=:Age, DateN=:DateN WHERE ID = :ID Limit 1");
+			$mettreajour = $this->cnx->prepare("UPDATE ".TABLENAME." SET Nom=:Nom, Prenom=:Prenom, Age=:Age, DateN=:DateN WHERE ID = :ID Limit 1");
 			$mettreajour->execute(array(':ID' => $client->get_user_id(), ':Nom' => $client->get_user_nom(), ':Prenom' => $client->get_user_prenom(), ':Age' => $client->get_user_age(), ':DateN' => $client->get_user_date()));
 		} catch (PDOException $e) {
 			echo 'Error: ' . $e->getMessage();
