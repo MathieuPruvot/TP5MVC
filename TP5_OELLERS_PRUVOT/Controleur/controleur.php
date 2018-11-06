@@ -58,7 +58,6 @@ function modifClient(){
 
 //routeur sur les vues
 if(isset($_POST)){
-	//var_dump($_POST);
 	if(empty($_POST) || empty($_POST['action'])) {// controle si données post est vide
 		require('..\Vues\formulaire.php'); // appelle la vue formulaire
 	}
@@ -81,7 +80,6 @@ if(isset($_POST)){
 				}
 				else{
 					$doublon =$db->selectClientsParNom($_POST['user_nom']);
-					var_dump($doublon);
 					if(!$doublon){
 						$client = nouveauclient();
 						$db->insertClient($client); //demande d'insérer le client dans la db

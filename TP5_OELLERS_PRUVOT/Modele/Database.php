@@ -6,7 +6,7 @@ class Database {
    
     private function __construct() {  
         //$this->cnx = new PDO("mysql:host = hostname; dbname = database",username, password);
-        $this->cnx = new PDO('mysql:host='.HOST.';charset=utf8',USER,PASS);
+        $this->cnx = new PDO('mysql:host='.HOST.';charset=utf8;port=3306;',USER,PASS);
         $this->cnx->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
             $this->cnx;
@@ -32,7 +32,8 @@ class Database {
     }
 	
 	public function createDB($db){
-		$newDB="DROP DATABASE IF EXISTS ".$db."; CREATE DATABASE ".$db.";";
+		$newDB="DROP DATABASE IF EXISTS ".$db."; 
+		CREATE DATABASE ".$db." CHARACTER SET utf8 COLLATE utf8_general_ci;"; 
 		var_dump($newDB);
 		$this->cnx->exec($newDB);
 	}
@@ -56,7 +57,7 @@ class Database {
 	}
 	
     public function selectClientsParNom($nom) {  //demande à la db de rechercher un client par son nom
-        $query = $this->cnx->prepare("SELECT COUNT(*) FROM client WHERE Nom = :Nom");
+        $query = $this->cnx->prepare("SELECT COUNT(*) FROM ".TABLENAME." WHERE Nom = :Nom");
         $resultat=$query->execute([':Nom' => $nom]);
         return $num_rows = $query->fetchColumn();
     }
@@ -69,7 +70,7 @@ class Database {
 		} //return $inserer;
     }
     public function getAllClients() {  //demande à la db de donner tout les clients sous forme de tableau
-        $query = $this->cnx->prepare('SELECT * FROM client');
+        $query = $this->cnx->prepare('SELECT * FROM ".TABLENAME."');
         $query->execute();
         $resultat=$query->fetchAll();
         return $resultat;
@@ -81,7 +82,7 @@ class Database {
     }
     public function supprimeClient($id) {  //demande à la db de supprimer le client
         try {
-            $sql = "DELETE FROM CLIENT WHERE ID = :ID Limit 1";
+            $sql = "DELETE FROM ".TABLENAME." WHERE ID = :ID Limit 1";
             $supprimer=$this->cnx->prepare($sql);
 			$supprimer->execute([':ID' =>$id]);
 		} catch (PDOException $e) {
