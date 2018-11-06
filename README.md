@@ -1,6 +1,6 @@
                                               CONSIGNES D'UTILISATION
 
-Aller dans fichier conf.php afin de définir :
+Aller dans fichier conf.php afin de définir :<br/>
       USER = nom d'utilisateur pour s'identifier à la BDD ('root' par défaut);
       PASS = mot de passe pour s'identifier à la BDD ('root' par défaut);
       HOST = adresse de la BDD ('localhost' par défaut);
