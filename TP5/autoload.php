@@ -3,7 +3,7 @@
 function myAutoLoad($classname){
 
 	$appDir =__DIR__ . DIRECTORY_SEPARATOR;
-	$codeDirs = array('Modele',);
+	$codeDirs = array('Model',);
 	
 	foreach($codeDirs as $dir){
 		$filepath = $appDir.$dir. DIRECTORY_SEPARATOR .$classname.'.php';
